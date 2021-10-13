@@ -1,18 +1,13 @@
+#![allow(dead_code)]
+
 use crate::common::Value;
-use integer_encoding::VarInt;
+use crate::common::Error;
+use crate::common::Result;
 
 pub struct Deserializer<'a> {
     data: &'a [u8],
     offset: usize,
 }
-
-#[derive(Debug)]
-pub enum Error {
-    Expected { to_be: u8, but_got: u8 },
-    Unexpected { byte: u8, at: usize },
-}
-
-pub type Result<T> = core::result::Result<T, Error>;
 
 impl<'a> Deserializer<'a> {
     pub fn new() -> Self {

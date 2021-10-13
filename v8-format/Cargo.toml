@@ -6,5 +6,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = "1"
+serde = { version = "1", features = ["derive"] }
 integer-encoding = "3.0.2"
+
+[dev-dependencies]
+serde_bytes = "0.11"

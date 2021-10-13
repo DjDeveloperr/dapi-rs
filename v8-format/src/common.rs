@@ -1,4 +1,45 @@
-use std::collections::{HashMap, HashSet};
+use serde::{de, ser};
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::{self, Display},
+};
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Error {
+    Expected { to_be: u8, but_got: u8 },
+    Unexpected { byte: u8, at: usize },
+    Message(String),
+}
+
+impl ser::Error for Error {
+    fn custom<T: Display>(msg: T) -> Self {
+        Error::Message(msg.to_string())
+    }
+}
+
+impl de::Error for Error {
+    fn custom<T: Display>(msg: T) -> Self {
+        Error::Message(msg.to_string())
+    }
+}
+
+impl Display for Error {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::Expected { to_be, but_got } => {
+                formatter.write_str(&format!("Expected byte {} but got {}", to_be, but_got))
+            }
+            Error::Unexpected { byte, at } => {
+                formatter.write_str(&format!("Unexpected byte {} at {}", byte, at))
+            }
+            Error::Message(msg) => formatter.write_str(&msg),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
+
+pub type Result<T> = core::result::Result<T, Error>;
 
 pub enum ArrayBufferViewType {
     Int8Array,
